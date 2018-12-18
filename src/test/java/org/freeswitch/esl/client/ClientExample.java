@@ -28,7 +28,7 @@ public class ClientExample {
                     L.info("Asr-Res:" + res);
                 }
             });
-
+            // ClueConSmartPhone@lieluobo
             client.connect(new InetSocketAddress("172.20.0.14", 8021), password, 10);
             client.setEventSubscriptions(EventFormat.PLAIN, "all");
 
