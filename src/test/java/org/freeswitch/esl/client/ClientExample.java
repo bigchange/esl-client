@@ -2,7 +2,10 @@ package org.freeswitch.esl.client;
 
 import com.google.common.base.Throwables;
 import org.freeswitch.esl.client.inbound.Client;
+import org.freeswitch.esl.client.inbound.IEslEventListener;
+import org.freeswitch.esl.client.internal.Context;
 import org.freeswitch.esl.client.internal.IModEslApi.EventFormat;
+import org.freeswitch.esl.client.transport.event.EslEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,18 +16,20 @@ public class ClientExample {
 
     public static void main(String[] args) {
         try {
-            if (args.length < 1) {
-                System.out.println("Usage: java ClientExample PASSWORD");
-                return;
-            }
 
-            String password = args[0];
+            String password = "ClueCon";
 
             Client client = new Client();
 
-            client.addEventListener((ctx, event) -> L.info("Received event: {}", event.getEventName()));
+            client.addEventListener((ctx, event) -> {
+                String ename = event.getEventName();
+                if ("CUSTOM".equals(ename)) {
+                    String res = event.getEventHeaders().get("ASR-Response");
+                    L.info("Asr-Res:" + res);
+                }
+            });
 
-            client.connect(new InetSocketAddress("localhost", 8021), password, 10);
+            client.connect(new InetSocketAddress("172.20.0.14", 8021), password, 10);
             client.setEventSubscriptions(EventFormat.PLAIN, "all");
 
         } catch (Throwable t) {
